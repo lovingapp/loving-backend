@@ -87,9 +87,9 @@ public final class RitualRecommendationDTOs {
     @Builder
     @Data
     public static class RitualStatusUpdate {
-        @NotNull(message = "ritualId is required")
+        @NotNull(message = "ritualHistoryId is required")
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-        private UUID ritualId;
+        private UUID ritualHistoryId;
 
         @NotNull(message = "status is required")
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)

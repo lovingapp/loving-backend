@@ -71,7 +71,7 @@ public class RitualRecommendationService {
         if (request.getRitualStatusUpdates() != null && !request.getRitualStatusUpdates().isEmpty()) {
             List<StatusUpdateEntry> ritualHistoryStatusUpdates = request.getRitualStatusUpdates().stream()
                     .map(update -> StatusUpdateEntry.builder()
-                            .ritualHistoryId(update.getRitualId())
+                            .ritualHistoryId(update.getRitualHistoryId())
                             .status(update.getStatus())
                             .build())
                     .collect(Collectors.toList());
