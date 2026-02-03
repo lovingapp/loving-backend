@@ -39,13 +39,12 @@ public class AIChatRitualRecommendationAndHistoryHelper {
     /**
      * Create ritual recommendation and history records if pack was recommended.
      */
-    public List<RitualHistoryDTO> createRecommendationAndHistory(UUID userId, UUID sessionId,
+    public UUID createRecommendationAndHistory(UUID userId, UUID sessionId,
             RitualPackDTO recommendedPack) {
-        List<RitualHistoryDTO> createdHistories = new ArrayList<>();
-
         if (recommendedPack != null) {
             // Create ritual recommendation record
-            RitualRecommendationCreateRequest recommendationCreateRequest = RitualRecommendationCreateRequest.builder()
+            RitualRecommendationCreateRequest recommendationCreateRequest = RitualRecommendationCreateRequest
+                    .builder()
                     .source(RecommendationSource.CHAT)
                     .sourceId(sessionId)
                     .ritualPackId(recommendedPack.getId())
@@ -62,11 +61,12 @@ public class AIChatRitualRecommendationAndHistoryHelper {
 
             // Bulk create ritual history records for the rituals inside recommended ritual
             // pack
-            createdHistories = createRitualHistories(userId, sessionId, recommendedPack,
-                    savedRecommendation.getId());
+            createRitualHistories(userId, sessionId, recommendedPack, savedRecommendation.getId());
+
+            return savedRecommendation.getId();
         }
 
-        return createdHistories;
+        return null;
     }
 
     /**

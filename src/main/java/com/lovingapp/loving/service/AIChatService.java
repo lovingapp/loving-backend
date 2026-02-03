@@ -3,7 +3,6 @@ package com.lovingapp.loving.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import com.lovingapp.loving.model.dto.ChatDTOs.ChatSessionDTO;
 import com.lovingapp.loving.model.dto.ChatDTOs.RecommendRitualPackResponse;
 import com.lovingapp.loving.model.dto.ChatDTOs.SendMessageRequest;
 import com.lovingapp.loving.model.dto.ChatDTOs.SendMessageResponse;
-import com.lovingapp.loving.model.dto.RitualHistoryDTOs.RitualHistoryDTO;
 import com.lovingapp.loving.model.dto.RitualPackDTO;
 import com.lovingapp.loving.model.dto.UserContextDTOs.UserContextCreateRequest;
 import com.lovingapp.loving.model.dto.UserContextDTOs.UserContextDTO;
@@ -105,14 +103,13 @@ public class AIChatService {
 		ChatMessage savedAssistantMessage = chatMessagePersistenceService.saveWrapUpMessage(sessionId, wrapUpMessage);
 
 		// Create recommendation and history records
-		List<RitualHistoryDTO> createdHistories = ritualRecommendationAndHistoryHelper.createRecommendationAndHistory(
+		UUID recommendationId = ritualRecommendationAndHistoryHelper.createRecommendationAndHistory(
 				userId, sessionId, recommendedPack);
 
 		return RecommendRitualPackResponse.builder()
 				.ritualPack(recommendedPack)
+				.recommendationId(recommendationId)
 				.wrapUpResponse(ChatMessageMapper.toDto(savedAssistantMessage))
-				.ritualHistoryMap(createdHistories.stream()
-						.collect(Collectors.toMap(RitualHistoryDTO::getRitualId, Function.identity())))
 				.build();
 	}
 

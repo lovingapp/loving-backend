@@ -2,11 +2,9 @@ package com.lovingapp.loving.model.dto;
 
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.lovingapp.loving.model.domain.ChatMetadata;
-import com.lovingapp.loving.model.dto.RitualHistoryDTOs.RitualHistoryDTO;
 import com.lovingapp.loving.model.enums.ChatMessageRole;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -80,7 +78,7 @@ public class ChatDTOs {
     @Builder
     public static class RecommendRitualPackResponse {
         private RitualPackDTO ritualPack;
+        private UUID recommendationId;
         private ChatMessageDTO wrapUpResponse;
-        private Map<UUID, RitualHistoryDTO> ritualHistoryMap;
     }
 }
