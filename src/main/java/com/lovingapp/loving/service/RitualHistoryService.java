@@ -97,7 +97,7 @@ public class RitualHistoryService {
 					RitualPackDTO ritualPack = ctx.ritualPackMap().get(ritualPackId);
 					UserRitualPackDTO dto = buildUserRitualPack(
 							entry.getKey(),
-							histories,
+							ritualHistories,
 							ritualPack,
 							ctx.ritualMap());
 					return dto;
