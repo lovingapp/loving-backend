@@ -1,9 +1,11 @@
 package com.lovingapp.loving.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import com.lovingapp.loving.model.dto.UserContextDTOs.UserContextCreateRequest;
 import com.lovingapp.loving.model.dto.UserContextDTOs.UserContextDTO;
 import com.lovingapp.loving.model.entity.ChatMessage;
 import com.lovingapp.loving.model.entity.ChatSession;
+import com.lovingapp.loving.model.enums.ChatMessageRole;
 import com.lovingapp.loving.service.chat.AIChatLLMHelper;
 import com.lovingapp.loving.service.chat.AIChatMessagePersistenceService;
 import com.lovingapp.loving.service.chat.AIChatRitualRecommendationAndHistoryHelper;
@@ -59,7 +62,7 @@ public class AIChatService {
 		chatMessagePersistenceService.saveUserMessage(sessionId, request.getContent());
 
 		// 2. Get conversation history
-		List<ChatMessage> messages = chatMessagePersistenceService.findMessagesBySessionId(sessionId);
+		List<ChatMessage> messages = buildLlmConversationContext(userId, sessionId);
 
 		// 3. Generate empathetic response from the conversation history using LLM
 		LLMEmpatheticResponse empatheticResponse = aiChatLLMHelper.generateEmpatheticResponse(sessionId, messages);
@@ -82,7 +85,7 @@ public class AIChatService {
 		// Validate session exists and belongs to user and fetch chat messages
 		ChatSession session = chatSessionPersistenceService.findSessionByIdAndUserId(sessionId, userId);
 
-		List<ChatMessage> messages = chatMessagePersistenceService.findMessagesBySessionId(sessionId);
+		List<ChatMessage> messages = buildLlmConversationContext(userId, sessionId);
 
 		// Extract user context from conversation using LLM
 		LLMUserContextExtraction extractedUserContext = aiChatLLMHelper.extractUserContext(userId, sessionId, messages);
@@ -164,6 +167,45 @@ public class AIChatService {
 		log.info("User context saved successfully sessionId={} userContextId={}", sessionId, savedUserContext.getId());
 
 		return savedUserContext;
+	}
+
+	/**
+	 * Build conversation context for LLM by appending all semantic summaries found
+	 * for this conversation and the current messages.
+	 */
+	private List<ChatMessage> buildLlmConversationContext(UUID userId, UUID sessionId) {
+		List<ChatMessage> allMessages = chatMessagePersistenceService.findMessagesBySessionId(sessionId);
+
+		// Find last recommendation system message
+		int lastRecommendationIndex = IntStream.range(0, allMessages.size())
+				.filter(i -> {
+					ChatMessage m = allMessages.get(i);
+					return m.getRole() == ChatMessageRole.SYSTEM
+							&& m.getMetadata() != null
+							&& m.getMetadata().getRecommendationId() != null;
+				})
+				.max()
+				.orElse(-1);
+
+		List<ChatMessage> relevantMessages = lastRecommendationIndex >= 0
+				? allMessages.subList(lastRecommendationIndex + 1, allMessages.size())
+				: allMessages;
+
+		List<ChatMessage> semanticSummaries = userContextService.findByConversationId(userId, sessionId).stream()
+				.map(UserContextDTO::getSemanticSummary)
+				.filter(summary -> summary != null && !summary.trim().isEmpty())
+				.map(summary -> ChatMessage.builder()
+						.sessionId(sessionId)
+						.role(ChatMessageRole.SYSTEM)
+						.content("Semantic summary of earlier conversation context:\n" + summary)
+						.build())
+				.toList();
+
+		List<ChatMessage> llmContext = new ArrayList<>();
+		llmContext.addAll(semanticSummaries);
+		llmContext.addAll(relevantMessages);
+
+		return llmContext;
 	}
 
 	/**
