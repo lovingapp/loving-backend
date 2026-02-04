@@ -65,12 +65,19 @@ public class AIChatSessionPersistenceService {
      * Update session title if not already set and a title is available from user
      * context.
      */
-    public void updateSessionTitle(ChatSession session, String conversationTitle) {
+    public void updateSessionTitleAndLastMessagePreview(ChatSession session, String conversationTitle,
+            String lastMessagePreview) {
         if (conversationTitle != null && !conversationTitle.isBlank()
                 && (session.getTitle() == null || session.getTitle().isBlank())) {
             String suggestedTitle = conversationTitle.trim();
             session.setTitle(suggestedTitle);
             log.info("Session title updated via JPA dirty checking sessionId={}", session.getId());
+        }
+
+        if (lastMessagePreview != null && !lastMessagePreview.isBlank()) {
+            String preview = lastMessagePreview.substring(0, Math.min(lastMessagePreview.length(), 150)) + "...";
+            session.setLastMessagePreview(preview);
+            log.info("Session lastMessagePreview updated via JPA dirty checking sessionId={}", session.getId());
         }
     }
 }

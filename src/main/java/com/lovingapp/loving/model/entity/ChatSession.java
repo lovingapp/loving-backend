@@ -38,6 +38,9 @@ public class ChatSession {
     @Column(name = "title", length = 120)
     private String title;
 
+    @Column(name = "last_message_preview", length = 160)
+    private String lastMessagePreview;
+
     @CreationTimestamp
     @Column(name = "created_at", columnDefinition = "timestamptz", updatable = false, nullable = false)
     private OffsetDateTime createdAt;

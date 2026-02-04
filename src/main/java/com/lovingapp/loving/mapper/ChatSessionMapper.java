@@ -16,6 +16,7 @@ public final class ChatSessionMapper {
         return ChatSessionDTO.builder()
                 .id(session.getId())
                 .title(session.getTitle())
+                .lastMessagePreview(session.getLastMessagePreview())
                 .createdAt(session.getCreatedAt())
                 .updatedAt(session.getUpdatedAt())
                 .build();

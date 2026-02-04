@@ -56,7 +56,7 @@ public class AIChatService {
 	@Transactional
 	public SendMessageResponse sendMessage(UUID userId, UUID sessionId, SendMessageRequest request) {
 		// 0. Validate session exists and belongs to the user
-		chatSessionPersistenceService.findSessionByIdAndUserId(sessionId, userId);
+		ChatSession session = chatSessionPersistenceService.findSessionByIdAndUserId(sessionId, userId);
 
 		// 1. Save user message
 		chatMessagePersistenceService.saveUserMessage(sessionId, request.getContent());
@@ -73,6 +73,8 @@ public class AIChatService {
 		ChatMessage savedAssistantMessage = chatMessagePersistenceService.saveAssistantMessage(sessionId, response);
 		log.info("Assistant message created sessionId={} chatMessageId={} readyForRecommendation={}", sessionId,
 				savedAssistantMessage.getId(), ready);
+
+		chatSessionPersistenceService.updateSessionTitleAndLastMessagePreview(session, null, response);
 
 		return SendMessageResponse.builder()
 				.assistantResponse(ChatMessageMapper.toDto(savedAssistantMessage))
@@ -93,9 +95,6 @@ public class AIChatService {
 		// Save user context
 		UserContextDTO savedUserContext = saveUserContext(userId, sessionId, extractedUserContext);
 
-		// Update session title if needed
-		chatSessionPersistenceService.updateSessionTitle(session, extractedUserContext.getConversationTitle());
-
 		// Get ritual pack recommendation
 		RitualPackDTO recommendedPack = getRitualPackRecommendation(savedUserContext);
 
@@ -108,6 +107,10 @@ public class AIChatService {
 		// Create recommendation and history records
 		UUID recommendationId = ritualRecommendationAndHistoryHelper.createRecommendationAndHistory(
 				userId, sessionId, recommendedPack);
+
+		// Update session title and lastMessagePreview
+		chatSessionPersistenceService.updateSessionTitleAndLastMessagePreview(session,
+				extractedUserContext.getConversationTitle(), "✨ Ritual pack suggested");
 
 		return RecommendRitualPackResponse.builder()
 				.ritualPack(recommendedPack)

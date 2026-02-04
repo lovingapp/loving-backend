@@ -43,6 +43,7 @@ public class ChatDTOs {
         private UUID id;
 
         private String title;
+        private String lastMessagePreview;
         private OffsetDateTime createdAt;
         private OffsetDateTime updatedAt;
         private List<ChatMessageDTO> messages; // optional, nullable
