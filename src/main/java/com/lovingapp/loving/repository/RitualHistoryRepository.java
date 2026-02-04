@@ -19,4 +19,7 @@ public interface RitualHistoryRepository extends JpaRepository<RitualHistory, UU
     List<RitualHistory> findByIdInAndUserId(List<UUID> ids, UUID userId);
 
     List<RitualHistory> findByUserIdAndStatusInOrderByUpdatedAtDesc(UUID userId, List<RitualHistoryStatus> statuses);
+
+    List<RitualHistory> findByUserIdAndRitualIdAndStatusIn(UUID userId, UUID ritualId,
+            List<RitualHistoryStatus> statuses);
 }

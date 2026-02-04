@@ -259,6 +259,26 @@ public class RitualHistoryService {
 			ritualHistory.setFeedback(feedback);
 		}
 		ritualHistoryRepository.save(ritualHistory);
+
+		log.info("Ritual status updated successfully ritualHistoryId={}", ritualHistoryId);
+
+		if (status == RitualHistoryStatus.COMPLETED) {
+			UUID ritualId = ritualHistory.getRitualId();
+
+			List<RitualHistory> activeHistories = ritualHistoryRepository.findByUserIdAndRitualIdAndStatusIn(
+					userId,
+					ritualId,
+					List.of(RitualHistoryStatus.ACTIVE, RitualHistoryStatus.STARTED));
+
+			for (RitualHistory history : activeHistories) {
+				history.setStatus(RitualHistoryStatus.COMPLETED);
+			}
+
+			ritualHistoryRepository.saveAll(activeHistories);
+
+			log.info("Ritual status updated successfully for ritualId={} ritualHistoryIds={}", ritualId,
+					activeHistories.stream().map(RitualHistory::getId).collect(Collectors.toList()));
+		}
 	}
 
 	@Transactional
