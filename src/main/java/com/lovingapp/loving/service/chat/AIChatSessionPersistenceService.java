@@ -75,7 +75,7 @@ public class AIChatSessionPersistenceService {
         }
 
         if (lastMessagePreview != null && !lastMessagePreview.isBlank()) {
-            String preview = lastMessagePreview.substring(0, Math.min(lastMessagePreview.length(), 150)) + "...";
+            String preview = lastMessagePreview.substring(0, Math.min(lastMessagePreview.length(), 150));
             session.setLastMessagePreview(preview);
             log.info("Session lastMessagePreview updated via JPA dirty checking sessionId={}", session.getId());
         }
