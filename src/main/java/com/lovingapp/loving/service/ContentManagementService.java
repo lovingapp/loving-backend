@@ -10,13 +10,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lovingapp.loving.helpers.HashUtils;
 import com.lovingapp.loving.model.dto.RitualDTO;
 import com.lovingapp.loving.model.dto.RitualPackDTO;
 import com.lovingapp.loving.model.entity.LoveTypeInfo;
@@ -233,7 +233,7 @@ public class ContentManagementService {
                     .build();
 
             String json = objectMapper.writeValueAsString(hashDto);
-            return DigestUtils.sha256Hex(json);
+            return HashUtils.sha256Hex(json);
         } catch (Exception e) {
             throw new RuntimeException("Failed to compute ritual hash", e);
         }
@@ -256,7 +256,7 @@ public class ContentManagementService {
                     .build();
 
             String json = objectMapper.writeValueAsString(hashDto);
-            return DigestUtils.sha256Hex(json);
+            return HashUtils.sha256Hex(json);
         } catch (Exception e) {
             throw new RuntimeException("Failed to compute ritual pack hash", e);
         }
@@ -273,7 +273,7 @@ public class ContentManagementService {
                     .build();
 
             String json = objectMapper.writeValueAsString(hashDto);
-            return DigestUtils.sha256Hex(json);
+            return HashUtils.sha256Hex(json);
         } catch (Exception e) {
             throw new RuntimeException("Failed to compute love type hash", e);
         }
