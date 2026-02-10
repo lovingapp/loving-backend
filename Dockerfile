@@ -1,21 +1,35 @@
-# Step 1: Build stage
-FROM eclipse-temurin:21-jdk AS builder
+# ---------- Build Stage ----------
+FROM maven:3.9.9-eclipse-temurin-21 AS build
+
 WORKDIR /app
 
-# Copy everything and build with gradle or maven
-COPY . .
+# Cache dependencies
+COPY pom.xml .
+RUN mvn -B -q -DskipTests dependency:go-offline
 
-RUN ./mvnw clean package -DskipTests
+# Copy source
+COPY src ./src
 
-# Step 2: Runtime stage
-FROM eclipse-temurin:21-jre
+# Build jar
+RUN mvn clean package -DskipTests
+
+
+# ---------- Runtime Stage ----------
+FROM eclipse-temurin:21-jdk-jammy
+
 WORKDIR /app
 
-# Copy built jar from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+# Create non-root user
+RUN useradd -ms /bin/bash appuser
 
-# Expose port (Spring will override via ENV)
+# Copy jar
+COPY --from=build /app/target/*.jar app.jar
+
+# Change ownership
+RUN chown appuser:appuser app.jar
+
+USER appuser
+
 EXPOSE 8080
 
-# Run jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]
