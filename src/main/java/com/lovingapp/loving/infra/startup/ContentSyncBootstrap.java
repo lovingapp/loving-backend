@@ -2,6 +2,7 @@ package com.lovingapp.loving.infra.startup;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.lovingapp.loving.service.ContentManagementService;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Profile("!test")
 @RequiredArgsConstructor
 @Slf4j
 public class ContentSyncBootstrap implements ApplicationRunner {
