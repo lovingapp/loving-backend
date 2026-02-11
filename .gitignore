@@ -1,41 +1,31 @@
-HELP.md
+### Build Artifacts (Maven)
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.log
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+### Environment Variables / Secrets
+.env
+.env.*
+!.env.example
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+### IDE Files
+.idea/
 *.iml
-*.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# VS Code
 .vscode/
 
-### Environment variables ###
-.env
+### OS Files
+.DS_Store
 
-### Python ###
+### Python (tools folder)
 __pycache__/
 *.py[cod]
-*$py.class
+*.pyo
+
+### Docker
+docker-compose.override.yml
+
+### Misc
+*.swp
+*.swo
+*~
