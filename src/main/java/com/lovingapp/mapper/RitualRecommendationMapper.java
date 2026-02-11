@@ -1,0 +1,23 @@
+package com.lovingapp.mapper;
+
+import com.lovingapp.model.dto.RitualRecommendationDTOs.RitualRecommendationDTO;
+import com.lovingapp.model.entity.RitualRecommendation;
+
+public final class RitualRecommendationMapper {
+    private RitualRecommendationMapper() {
+    }
+
+    public static RitualRecommendationDTO toDto(RitualRecommendation entity) {
+        if (entity == null)
+            return null;
+        return RitualRecommendationDTO.builder()
+                .id(entity.getId())
+                .userId(entity.getUserId())
+                .source(entity.getSource())
+                .sourceId(entity.getSourceId())
+                .ritualPackId(entity.getRitualPackId())
+                .status(entity.getStatus())
+                .createdAt(entity.getCreatedAt())
+                .build();
+    }
+}

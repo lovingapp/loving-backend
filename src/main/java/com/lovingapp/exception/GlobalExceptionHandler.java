@@ -1,0 +1,107 @@
+package com.lovingapp.exception;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Void> handleNotFound(ResourceNotFoundException ex) {
+        log.warn("Resource not found: {}", ex.getMessage());
+        return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Void> handleUnauthorized(AccessDeniedException ex) {
+        log.info("Unauthorized access attempt: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleRequestBodyValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        DefaultMessageSourceResolvable::getDefaultMessage,
+                        (a, b) -> a));
+
+        log.warn("Validation failed: {}", errors);
+
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<Void> handleMethodValidation(HandlerMethodValidationException ex) {
+        log.warn("Method argument validation failed: {}", ex.getMessage());
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Void> handleBadRequest(IllegalArgumentException ex) {
+        log.warn("Bad request: {}", ex.getMessage());
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<Void> handleResourceAlreadyExists(ResourceAlreadyExistsException ex) {
+        log.warn("Resource already exists: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Void> handleGeneric(Exception ex) {
+        log.error("Unhandled exception", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @ExceptionHandler(LLMException.class)
+    public ResponseEntity<Void> handleLlmException(LLMException ex) {
+        LLMException.Type type = ex.getType();
+        String msg = ex.getOpenAiMessage() != null && !ex.getOpenAiMessage().isBlank()
+                ? ex.getOpenAiMessage()
+                : ex.getMessage();
+
+        return switch (type) {
+            case UNAUTHORIZED -> {
+                log.warn("LLM unauthorized: {}", msg);
+                yield ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            }
+            case RATE_LIMIT -> {
+                log.warn("LLM rate limited: {}", msg);
+                yield ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+            }
+            case REQUEST_PARSING -> {
+                log.warn("LLM bad request: {}", msg);
+                yield ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
+            }
+            case RESPONSE_PARSING -> {
+                log.warn("LLM response parsing failed: {}", msg);
+                yield ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
+            }
+            case SERVICE_UNAVAILABLE -> {
+                log.warn("LLM service unavailable: {}", msg);
+                yield ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+            }
+            case UNKNOWN -> {
+                log.error("LLM unknown error: {}", msg);
+                yield ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        };
+    }
+}

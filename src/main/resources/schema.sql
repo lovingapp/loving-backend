@@ -1,4 +1,4 @@
--- PostgreSQL DDL for rituals table aligned with com.lovingapp.loving.model.Ritual
+-- PostgreSQL DDL for rituals table aligned with com.lovingapp.model.Ritual
 -- Note: Hibernate currently manages schema (spring.jpa.hibernate.ddl-auto=update).
 -- This DDL is provided for manual database setup/migrations if needed.
 

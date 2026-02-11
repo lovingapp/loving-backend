@@ -1,0 +1,24 @@
+package com.lovingapp.mapper;
+
+import com.lovingapp.model.dto.RitualHistoryDTOs.RitualHistoryDTO;
+import com.lovingapp.model.entity.RitualHistory;
+
+public final class RitualHistoryMapper {
+    private RitualHistoryMapper() {
+    }
+
+    public static RitualHistoryDTO toDto(RitualHistory entity) {
+        if (entity == null)
+            return null;
+        return RitualHistoryDTO.builder()
+                .id(entity.getId())
+                .ritualId(entity.getRitualId())
+                .ritualPackId(entity.getRitualPackId())
+                .recommendationId(entity.getRecommendationId())
+                .status(entity.getStatus())
+                .feedback(entity.getFeedback())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
+    }
+}

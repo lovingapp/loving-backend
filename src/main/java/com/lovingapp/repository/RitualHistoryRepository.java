@@ -1,0 +1,25 @@
+package com.lovingapp.repository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.lovingapp.model.entity.RitualHistory;
+import com.lovingapp.model.enums.RitualHistoryStatus;
+
+public interface RitualHistoryRepository extends JpaRepository<RitualHistory, UUID> {
+    List<RitualHistory> findByUserIdOrderByUpdatedAtDesc(UUID userId);
+
+    List<RitualHistory> findByUserIdAndRecommendationIdOrderByUpdatedAtDesc(UUID userId, UUID recommendationId);
+
+    Optional<RitualHistory> findByIdAndUserId(UUID id, UUID userId);
+
+    List<RitualHistory> findByIdInAndUserId(List<UUID> ids, UUID userId);
+
+    List<RitualHistory> findByUserIdAndStatusInOrderByUpdatedAtDesc(UUID userId, List<RitualHistoryStatus> statuses);
+
+    List<RitualHistory> findByUserIdAndRitualIdAndStatusIn(UUID userId, UUID ritualId,
+            List<RitualHistoryStatus> statuses);
+}

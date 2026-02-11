@@ -1,0 +1,19 @@
+package com.lovingapp.repository;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.lovingapp.model.entity.UserContext;
+
+@Repository
+public interface UserContextRepository extends JpaRepository<UserContext, UUID> {
+
+    List<UserContext> findByUserId(UUID userId);
+
+    List<UserContext> findByUserIdAndConversationId(UUID userId, UUID conversationId);
+
+    void deleteByUserIdAndConversationId(UUID userId, UUID conversationId);
+}

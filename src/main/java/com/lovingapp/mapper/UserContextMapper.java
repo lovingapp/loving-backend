@@ -1,0 +1,30 @@
+package com.lovingapp.mapper;
+
+import java.util.Collections;
+import java.util.Objects;
+
+import org.springframework.stereotype.Component;
+
+import com.lovingapp.model.dto.UserContextDTOs.UserContextDTO;
+import com.lovingapp.model.entity.UserContext;
+
+@Component
+public final class UserContextMapper {
+    public static UserContextDTO toDto(UserContext entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return UserContextDTO.builder()
+                .id(entity.getId())
+                .conversationId(entity.getConversationId())
+                .journey(entity.getJourney())
+                .loveTypes(Objects.requireNonNullElse(entity.getLoveTypes(), Collections.emptyList()))
+                .relationalNeeds(Objects.requireNonNullElse(entity.getRelationalNeeds(), Collections.emptyList()))
+                .relationshipStatus(entity.getRelationshipStatus())
+                .semanticSummary(entity.getSemanticSummary())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
+                .build();
+    }
+}
