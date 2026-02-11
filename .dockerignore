@@ -3,6 +3,7 @@
 .vscode
 .idea
 target/
+tools/
 node_modules/
 .env
 *.log

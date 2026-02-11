@@ -13,9 +13,9 @@
 	</parent>
 	
 	<groupId>com.lovingapp</groupId>
-	<artifactId>loving</artifactId>
+	<artifactId>loving-backend</artifactId>
 	<version>0.1.0</version>
-	<name>loving</name>
+	<name>Loving Backend</name>
 	<description>Backend for Loving App</description>
 	
 	<properties>
