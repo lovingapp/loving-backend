@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <!-- Common properties -->
-  <property name="APP_NAME" value="loving-app"/>
+  <!-- App Properties -->
 
-  <!-- Common appenders -->
+  <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="loving-backend"/>
+  <springProperty scope="context" name="ENV" source="spring.profiles.active" defaultValue="local"/>
 
-  <!-- Console logging -->
+  <!-- Console Appender -->
+
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>
@@ -15,8 +16,10 @@
     </encoder>
   </appender>
 
-  <!-- Loki appender -->
+  <!-- Loki Appender -->
+
   <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+
     <http>
       <url>${LOKI_URL}</url>
 
@@ -27,45 +30,66 @@
     </http>
 
     <format>
+
+      <!-- Labels = indexed fields (keep LOW cardinality) -->
       <label>
         <pattern>
           app=${APP_NAME},
-          env=${SPRING_PROFILES_ACTIVE:-local},
+          env=${ENV},
           level=%level
         </pattern>
       </label>
 
+      <!-- Message = searchable payload -->
       <message>
-        <pattern>%msg</pattern>
+        <pattern>
+          %msg
+          | req=%X{requestId}
+          | user=%X{userId}
+        </pattern>
       </message>
     </format>
+
+  </appender>
+
+  <!-- Async Wrapper For Loki -->
+
+  <appender name="ASYNC_LOKI" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>512</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="LOKI"/>
   </appender>
   
-  <!-- Fallback root (used before Spring profiles resolve) -->
+  <!-- Default Root (Fallback) -->
+
   <root level="INFO">
     <appender-ref ref="CONSOLE"/>
   </root>
+
   
-  <!-- LOCAL profile -->
+  <!-- Local Profile -->
+
   <springProfile name="local">
-    <root level="INFO">
+    <root level="DEBUG">
       <appender-ref ref="CONSOLE"/>
-      <!-- <appender-ref ref="LOKI"/> -->
     </root>
   </springProfile>
 
-  <!-- TEST profile-->
+  <!-- Test Profile -->
+
   <springProfile name="test">
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
     </root>
   </springProfile>
 
-  <!-- EVERYTHING ELSE -->
+  <!-- Prod / Non-Local -->
+
   <springProfile name="!local &amp; !test">
     <root level="INFO">
       <appender-ref ref="CONSOLE"/>
-      <!-- <appender-ref ref="LOKI"/> -->
+      <appender-ref ref="ASYNC_LOKI"/>
     </root>
   </springProfile>
 
