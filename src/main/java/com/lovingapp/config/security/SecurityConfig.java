@@ -21,7 +21,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.lovingapp.config.filter.RequestIdMdcFilter;
+import com.lovingapp.config.filter.RequestContextMdcFilter;
 import com.lovingapp.config.filter.UserIdMdcFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class SecurityConfig {
 
 	private final JwtDecoderConfig jwtConfig;
 	private final CorsConfig corsConfig;
-	private final RequestIdMdcFilter requestIdFilter;
+	private final RequestContextMdcFilter requestContextFilter;
 	private final UserIdMdcFilter userIdMdcFilter;
 
 	private static final RequestMatcher PUBLIC_ENDPOINT_MATCHER = buildPublicMatcher();
@@ -80,7 +80,7 @@ public class SecurityConfig {
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.bearerTokenResolver(bearerTokenResolver())
 						.jwt(jwt -> jwt.decoder(jwtConfig.jwtDecoder())))
-				.addFilterBefore(requestIdFilter, SecurityContextHolderFilter.class)
+				.addFilterBefore(requestContextFilter, SecurityContextHolderFilter.class)
 				.addFilterAfter(userIdMdcFilter, BearerTokenAuthenticationFilter.class);
 
 		return http.build();
