@@ -1,27 +1,13 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
     hikari:
       maximum-pool-size: 2
       minimum-idle: 0
-      connection-timeout: 30000
       initialization-fail-timeout: 0
-      data-source-properties:
-        ssl: true
-        sslmode: require
 
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         default_schema: dev
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        boot.allow_jdbc_metadata_access: false
-        format_sql: true
-    show-sql: false
-    hibernate:
-      ddl-auto: update
-    open-in-view: false

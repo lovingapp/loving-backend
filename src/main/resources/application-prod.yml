@@ -1,14 +1,8 @@
 spring:
-  application:
-    name: loving-app
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/loving_db}
-    username: ${SPRING_DATASOURCE_USERNAME:loving_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:loving_password}
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
-      connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
   jpa:
@@ -16,31 +10,21 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
         jdbc:
           batch_size: 20
           fetch_size: 50
         order_inserts: true
         order_updates: true
-  jackson:
-    serialization:
-      write-dates-as-timestamps: false
-      indent-output: false
+
+ai:
+  openai:
+    model: gpt-4.1-mini
 
 server:
-  port: 8080
   servlet:
     context-path: /api
   compression:
     enabled: true
-    min-response-size: 1024
-  tomcat:
-    threads:
-      max: 200
-      min-spare: 10
-    max-connections: 10000
-    accept-count: 100
 
 management:
   endpoints:
@@ -54,17 +38,3 @@ management:
     export:
       prometheus:
         enabled: true
-
-logging:
-  level:
-    root: INFO
-    com.lovingapp: INFO
-    org.springframework.web: WARN
-    org.springframework.security: WARN
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
-  file:
-    name: /var/log/loving-app/application.log
-    max-size: 10MB
-    max-history: 30
