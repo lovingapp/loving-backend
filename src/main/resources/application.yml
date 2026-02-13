@@ -48,11 +48,13 @@ management:
       base-path: /actuator
       exposure:
         include: health,info
-
   endpoint:
     health:
       probes:
         enabled: true
+  info:
+    env:
+      enabled: true
 
 info:
   app:
