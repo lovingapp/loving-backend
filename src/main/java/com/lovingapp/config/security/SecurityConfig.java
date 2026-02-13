@@ -34,7 +34,10 @@ public class SecurityConfig {
 	public static final String[] PUBLIC_INFRA_ENDPOINTS = {
 			"/swagger-ui/**",
 			"/v3/api-docs/**",
-			"/api-docs/**"
+			"/api-docs/**",
+			"/actuator/health/**",
+			"/actuator/info",
+			"/actuator/prometheus"
 	};
 
 	public static final String[] PUBLIC_API_ENDPOINTS = {
