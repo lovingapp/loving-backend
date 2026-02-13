@@ -1,13 +1,12 @@
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/loving_test}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     hikari:
       maximum-pool-size: 2
       minimum-idle: 0
+      idle-timeout: 10000
       data-source-properties:
         ssl: false
+        sslmode: disable
 
   jpa:
     hibernate:
