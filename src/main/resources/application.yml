@@ -24,6 +24,10 @@ spring:
 server:
   address: 0.0.0.0
   port: ${PORT:8080}
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
 
 supabase:
   url: ${SUPABASE_URL}
@@ -37,10 +41,12 @@ ai:
 
 springdoc:
   api-docs:
-    path: /api-docs
+    path: /v3/api-docs
   swagger-ui:
+    enabled: false
     path: /swagger-ui
     operationsSorter: method
+    tags-sorter: alpha
 
 management:
   endpoints:

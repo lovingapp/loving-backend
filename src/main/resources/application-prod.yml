@@ -21,12 +21,6 @@ ai:
   openai:
     model: gpt-4.1-mini
 
-server:
-  servlet:
-    context-path: /api
-  compression:
-    enabled: true
-
 management:
   endpoints:
     web:

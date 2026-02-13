@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/rituals")
+@RequestMapping("/v1/rituals")
 @Slf4j
 public class RitualController {
 

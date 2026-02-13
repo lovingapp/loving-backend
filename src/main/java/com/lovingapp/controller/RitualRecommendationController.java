@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/ritual-recommendation")
+@RequestMapping("/v1/ritual-recommendation")
 @Slf4j
 public class RitualRecommendationController {
 

@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/love-types")
+@RequestMapping("/v1/love-types")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @Slf4j

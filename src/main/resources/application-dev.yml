@@ -11,3 +11,7 @@ spring:
     properties:
       hibernate:
         default_schema: dev
+
+springdoc:
+  swagger-ui:
+    enabled: true
